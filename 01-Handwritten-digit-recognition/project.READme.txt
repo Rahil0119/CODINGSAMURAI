@@ -1,0 +1,67 @@
+# Handwritten Digit Classifier (MNIST CNN Pipeline)
+
+A production-ready **Handwritten Digit Recognition System** built on a Deep Learning **Convolutional Neural Network (CNN)** and deployed as an interactive web application using **Streamlit**.
+
+Is project ka core objective ek robust backend pipeline banana tha jo raw pixel vectors ko dynamic web inputs (drawing canvas/file uploads) ke sath integration karke real-time inference generate kar sake.
+
+
+
+## Key Features & Architectural Enhancements
+
+* **Dual-Inference Pipeline:** Implemented standalone processing nodes for live drawing canvas data (`st_canvas` vector streams) and standard image file formats (`.png`, `.jpg`, `.jpeg`).
+* **High-Accuracy Edge Model:** Features a custom CNN architecture trained on the Kaggle MNIST dataset, achieving an empirical validation accuracy of **99.14%**.
+* **Zero-Input Exception Handling:** Canvas pixel vectors coordinate matrix evaluation checks logic added. Agar canvas blank (`0` variance) hai, toh model execution pass pipeline block ho jata hai to prevent arbitrary predictions, displaying: `"No digit detected!"`.
+* **Dynamic Intensity Inversion:** Core MNIST weights expect white pixels on black backdrops. Embedded an automated preprocessing filter using `PIL.ImageOps.invert` jo uploaded bright images (e.g., black ink on white paper) ko invert kar deta hai before tensor shaping.
+
+
+## Technology Stack
+
+* **Core Runtime:** Python 3.12+
+* **Deep Learning Framework:** TensorFlow 2.19.0 / Keras (Native Keras format)
+* **Data Engineering & Matrix Ops:** NumPy, Pandas, Scikit-Learn
+* **Application Frontend UI:** Streamlit Engine
+* **Image Processing Engine:** Pillow (PIL)
+
+
+
+## Repository Structure
+Ensure your workspace directory maintains the following layout:
+
+```text
+mnist-app/
+│
+├── mnist_cnn.keras        # Native Keras serialization file (Trained CNN Weights)
+├── app.py                 # Core Streamlit app containing UI and inference loop
+└── README.md              # Project documentation and setup guide (This file)
+
+
+
+****Local Deployment & Installation Guide****
+Follow these steps to spin up the development server locally:
+
+1. Environment Setup
+Create a dedicated project directory and copy over the source files: app.py along with the serialized model file mnist_cnn.keras.
+
+2. Dependency Management
+Install the necessary package requirements using pip directly from your environment terminal
+    pip install streamlit tensorflow numpy pillow streamlit-drawable-canvas
+
+
+Execute the runtime script to launch the local web socket server
+    streamlit run app.py
+
+
+Model Architecture & Pipeline Mechanics
+1/  Dataset Optimization: Extracted data from Kaggle's Digit Recognizer matrix. 
+    Reshaped standard $1\text{D}$ 784-pixel vectors back into uniform $28 \times 28 \times 1$ grayscale tensors.
+
+2/ Feature Extraction Layer: Utilizes two sequential convolutional blocks 
+   (Conv2D filters with $5\times5$ and $3\times3$ kernels, respectively, running on ReLU activation functions).
+
+3/ Dimensionality Reduction: Downsampled using MaxPool2D to condense spatial dimensions while preserving core features.
+
+4/ Regularization Layer: Scaled Dropout layers ($0.25$ and $0.5$) are applied directly before
+   the dense layer to mitigate overfitting risks.
+
+5/ Loss & Evaluation: Model optimization handled via the Adam optimizer against a categorical_crossentropy loss vector
+   computed over 15 training epochs.
